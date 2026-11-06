@@ -7,11 +7,14 @@
     <groupId>com.universidad</groupId>
     <artifactId>envios-service</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <!-- sonar-maven-plugin toma el nombre del proyecto de <name>, no de sonar-project.properties -->
+    <name>Envios Service</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Propiedades leidas por sonar-maven-plugin (mvn sonar:sonar); se mantienen alineadas con sonar-project.properties -->
         <sonar.host.url>http://localhost:9000</sonar.host.url>
         <sonar.projectKey>com.universidad:envios-service</sonar.projectKey>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
