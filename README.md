@@ -166,14 +166,14 @@ Cada prueba nueva corresponde a una rama que el reporte JaCoCo de la Parte 1 mar
 
 ## Configuración en SonarQube
 
-**Quality Profile "Estándar Laboratorio"** (Java): copia de "Sonar way" con la regla **S1541** *"Cyclomatic Complexity of methods should not exceed the authorized threshold"* activada con **Threshold = 10**, y asignado al proyecto en *Project Settings → Quality Profile*.
+**Quality Profile "Estándar Laboratorio"** (Java): copia de "Sonar way" con la regla **S1541** activada con **Threshold = 10** (en esta versión de SonarQube, la Community Build 26.11 en modo MQR, la regla aparece como *"Methods should not be too complex"*; en la guía se llama *"Cyclomatic Complexity of methods should not exceed the authorized threshold"*), y asignado al proyecto en *Project Settings → Quality Profile*.
 
 **Quality Gate "Estándar Laboratorio"**, asignado al proyecto en *Project Settings → Quality Gate*:
 
 | Condición | Umbral | Propósito |
 |---|---|---|
 | Coverage | is less than **70%** | Cobertura mínima realista (Decisión 6) |
-| New Code Smells | is greater than **0** | Bloquea métodos nuevos con CC > 10 (vía S1541) u otros code smells |
+| Maintainability Issues (New Code) | is greater than **0** | Equivale a *New Code Smells > 0* de la guía (en modo MQR los code smells se llaman *Maintainability Issues*): bloquea métodos nuevos con CC > 10 (vía S1541) u otros code smells |
 | Duplicated Lines (%) | is greater than **5%** | Máximo 5% de duplicación |
 
 ![Quality Profile con S1541 = 10](docs/quality-profile.png)
@@ -188,14 +188,14 @@ Cada prueba nueva corresponde a una rama que el reporte JaCoCo de la Parte 1 mar
 | Cobertura de ramas de la lógica de envío | 18% (7/38) | 100% (32/32) | **+82 puntos** (meta: ≥ 15) |
 | Cobertura de líneas | 24% (10/42) | 100% (49/49) | +76 puntos |
 | Code Smells | 0  | 0 | — |
-| Duplicated Lines (%) | 0%  | 7.95% | — |
-| Quality Gate | — | **Failed** (Duplicated Lines 7.95% > 5%)  | — |
+| Duplicated Lines (%) on New Code | 0% | 5.81% (413 líneas nuevas) | — |
+| Quality Gate | — | **Failed** (Duplicated Lines 5.81% > 5%) | — |
 
 > **Cómo se lee el JaCoCo final:** *Cxty* = 6 en `service` (5 de `calcularCosto()` + 1 del constructor) y 20 en `estrategia` (4 clases × [CC 4 de `calcular()` + 1 del constructor]). La cobertura de ramas ahora se reparte entre el orquestador (8 ramas) y las estrategias (24 ramas).
 
 ## Resultado del Quality Gate: Failed (y por qué)
 
-El Quality Gate **falla únicamente por la condición de duplicación**: *Duplicated Lines (%)* = 7.95%, por encima del umbral de 5%. Coverage y New Code Smells se cumplen. 
+El Quality Gate **falla únicamente por la condición de duplicación**: *Duplicated Lines (%)* = **5.81%**, por encima del umbral de 5%. Las otras dos condiciones se cumplen: Coverage = **100%** (≥ 70%) y **0** Maintainability Issues nuevos. Antes de ampliar la suite de pruebas el valor era 7.95%: la duplicación se mide sobre las líneas nuevas, y al crecer ese total el porcentaje bajó, aunque los bloques duplicados de las estrategias siguen siendo los mismos.
 
 **Causa:** las estrategias `EnvioEstandarStrategy`, `EnvioExpressStrategy` y `EnvioInternacionalStrategy` repiten la misma estructura de tramos de peso (`≤ 5`, `≤ 20`, `> 20`) y de recargo por distancia, y solo cambian los coeficientes. El detector de duplicados de SonarQube compara la secuencia de tokens, así que reconoce esos bloques como duplicados aunque las tarifas sean distintas.
 
